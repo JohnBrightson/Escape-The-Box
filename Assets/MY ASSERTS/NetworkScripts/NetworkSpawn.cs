@@ -1,20 +1,46 @@
-using UnityEngine;
 using Unity.Netcode;
 using StarterAssets;
-
-public class NetworkSpawn : NetworkBehaviour
+using UnityEngine;
+using UnityEngine.InputSystem;
+namespace NetcodeDemo
 {
-    
-    public override void OnNetworkSpawn()
-    {
-        NetworkObject localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        if (localPlayerObject != null)
-        {
-            Debug.Log("Local Object has Spawned");
-            localPlayerObject.GetComponent<CharacterController>().enabled = true;
-            localPlayerObject.GetComponent<ThirdPersonController>().enabled = true;
-            localPlayerObject.GetComponent<StarterAssetsInputs>().enabled = true;
-            localPlayerObject.transform.Find("FreeLookCamera")?.gameObject.SetActive(true);
-        }
-    }
+ public class NetworkSpawn: NetworkBehaviour
+ {
+ [SerializeField]
+ CharacterController m_CharacterController;
+ [SerializeField]
+ ThirdPersonController m_ThirdPersonController;
+ [SerializeField]
+ PlayerInput m_PlayerInput;
+ 
+ [SerializeField]
+ Transform m_CameraFollow;
+ private void Awake()
+ {
+ m_PlayerInput.enabled = false;
+ m_ThirdPersonController.enabled = false;
+ m_CharacterController.enabled = false;
+ }
+ public override void OnNetworkSpawn()
+ {
+ base.OnNetworkSpawn();
+ enabled = IsClient; // Enable if this is a client.
+ if (!IsOwner)
+ {
+ // Disable if this is not the owner
+ enabled = false;
+ m_PlayerInput.enabled = false;
+ m_CharacterController.enabled = false;
+ m_ThirdPersonController.enabled = false;
+ return;
+ }
+ 
+ // Enable if this is an owner
+ m_PlayerInput.enabled = true;
+ m_CharacterController.enabled = true;
+ m_ThirdPersonController.enabled = true;
+ m_CameraFollow.gameObject.SetActive(true);
+ 
+ }
+ }
 }
