@@ -15,7 +15,6 @@ namespace Escapes.Networking
         {
             m_PlayerInput.enabled = false;
             m_ThirdPersonController.enabled = false;
-            m_CharacterController.enabled = false;
         }
         public override void OnNetworkSpawn()
         {
@@ -26,14 +25,12 @@ namespace Escapes.Networking
         // Disable if this is not the owner
             enabled = false;
             m_PlayerInput.enabled = false;
-            m_CharacterController.enabled = false;
             m_ThirdPersonController.enabled = false;
             return;
         }
         
         // Enable if this is an owner
         m_PlayerInput.enabled = true;
-        m_CharacterController.enabled = true;
         m_ThirdPersonController.enabled = true;
         m_CameraFollow.gameObject.SetActive(true);
         
